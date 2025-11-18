@@ -1,0 +1,44 @@
+import "./globals.css";
+
+import type { Metadata } from "next";
+import { Manrope } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import ZoomProvider from "@/providers/ZoomProvider";
+
+const manrope = Manrope({
+  weight: ["400"],
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: {
+    default: "Charttix",
+    template: "%s | Charttix",
+  },
+  description: "Charttix — the most student-friendly budgeting experience.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${manrope.className} antialiased max-w-screen h-auto w-screen overflow-x-hidden`}
+      >
+        <ZoomProvider>
+          <ThemeProvider
+            forcedTheme="light"
+            enableSystem={false}
+            attribute={"class"}
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ZoomProvider>
+      </body>
+    </html>
+  );
+}
