@@ -47,12 +47,18 @@ export function NavigationBar() {
             <Button
               variant={"ghost"}
               className="cursor-pointer text-sm border border-transparent hover:border-border"
+              asChild
             >
-              Sign In
+              <Link href={"/sign-in"}>Sign In</Link>
             </Button>
-            <Button className="bg-green-400 text-sm border-green-500 border cursor-pointer text-black hover:bg-green-500">
-              <span>Open your account</span>
-              <ArrowUpRightFromCircleIcon className="size-3" />
+            <Button
+              asChild
+              className="bg-green-400 text-sm border-green-500 border cursor-pointer text-black hover:bg-green-500"
+            >
+              <Link href={"/sign-up"}>
+                <span>Open your account</span>
+                <ArrowUpRightFromCircleIcon className="size-3" />
+              </Link>
             </Button>
           </div>
         </div>
