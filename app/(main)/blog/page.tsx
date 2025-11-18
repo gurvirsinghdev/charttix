@@ -1,6 +1,5 @@
 import { DotIcon } from "lucide-react";
 import moment from "moment";
-import Image from "next/image";
 import Link from "next/link";
 import { cache } from "react";
 import slugify from "slugify";
@@ -16,24 +15,26 @@ interface Post {
   updatedAt: Date | null;
 }
 
-const createRandomSize = function (maxSize: number) {
-  const minSize = maxSize / 2;
-  const randomWidth =
-    minSize +
-    Math.floor(
-      Math.random() * (maxSize - maxSize < minSize ? minSize : maxSize)
-    );
-  const complimentingHeight = Math.round(randomWidth / (16 / 9));
+const apiKey = "vx03r81G947cjgYxo8P5ZbSVstrklf9cNUTcTlCPDa3nrD6q6OojTaPp";
+const getImages = cache(async function () {
+  const imageApiEndpoint = "https://api.pexels.com/v1/curated";
 
-  return `${randomWidth}/${complimentingHeight}`;
-};
+  const request = await fetch(imageApiEndpoint, {
+    headers: {
+      Authorization: apiKey,
+    },
+  });
+
+  const response = await request.json();
+  return response?.photos;
+});
 
 const createPost = (
   postPayload: Omit<
     Post,
     "slug" | "category" | "createdAt" | "image" | "updatedAt"
   >
-): Post => ({
+): Omit<Post, "image"> => ({
   ...postPayload,
   updatedAt: null,
   createdAt: new Date(),
@@ -42,10 +43,9 @@ const createPost = (
     lower: true,
     strict: true,
   }),
-  image: `https://picsum.photos/${createRandomSize(1920 * 2)}`,
 });
 
-const getDemoPosts: () => Post[] = cache(() => [
+const partialPosts: Omit<Post, "image">[] = [
   createPost({
     id: "0",
     title: "Make This Father's Day Unforgettable",
@@ -73,16 +73,27 @@ const getDemoPosts: () => Post[] = cache(() => [
     excerpt:
       "Planning the perfect graduation party? These tips will help you nail invitations, décor, and personalized keepsakes that guests will love.",
   }),
-]);
+];
 
-export default function BlogPage() {
+const buildPosts = (
+  partialPosts: Omit<Post, "image">[],
+  images: string[]
+): Post[] => partialPosts.map((post, idx) => ({ ...post, image: images[idx] }));
+
+export default async function BlogPage() {
+  const images = await getImages();
+  const posts = buildPosts(
+    partialPosts,
+    images.map((image: any) => image.src.original)
+  );
+
   return (
     <section className="max-w-(--breakpoint-xl) mx-auto p-6 border-y border-border">
       <h3 className="text-lg font-semibold text-foreground mb-6 font-sans">
         Latest Articles
       </h3>
       <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {getDemoPosts().map((post) => (
+        {posts.map((post) => (
           <article
             key={post.id}
             className="bg-white flex flex-col border border-border rounded-lg overflow-hidden"
