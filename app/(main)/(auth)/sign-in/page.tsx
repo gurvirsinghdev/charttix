@@ -1,7 +1,36 @@
 "use client";
 import Link from "next/link";
+import { SubmitHandler, useForm } from "react-hook-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const signInSchema = z.object({
+  email: z.email(),
+  password: z.string(),
+});
+type SignInSchema = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
+  const form = useForm<SignInSchema>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const userLogin: SubmitHandler<SignInSchema> = (data) => {
+    console.log(data);
+  };
+
   return (
     <main className="h-full w-full max-w-(--breakpoint-xl) mx-auto grid grid-cols-1 lg:grid-cols-2">
       <div className="w-full h-full bg-white overflow-hidden border border-border ">
@@ -11,46 +40,67 @@ export default function SignInPage() {
             Welcome back — enter your email and password to continue.
           </p>
 
-          <form className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+          <Form {...form}>
+            <form className="space-y-6">
+              <FormField
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <input
+                        {...field}
+                        placeholder="Enter your email"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+
+                    <div id="email-note" className="sr-only">
+                      Enter the email address for your Charttix account.
+                    </div>
+                  </FormItem>
+                )}
               />
-              <div id="email-note" className="sr-only">
-                Enter the email address for your Charttix account.
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+              <FormField
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <input
+                        {...field}
+                        type="password"
+                        placeholder="Enter your password"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="flex items-center justify-end">
-              <div className="text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="text-slate-600 hover:underline"
-                >
-                  Forgot password?
-                </Link>
+              <div className="flex items-center justify-end">
+                <div className="text-sm">
+                  <Link
+                    href="/forgot-password"
+                    className="text-slate-600 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-black transition"
-            >
-              Sign in
-            </button>
-          </form>
+              <button
+                type="submit"
+                onClick={form.handleSubmit(userLogin)}
+                className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-black transition"
+              >
+                Sign in
+              </button>
+            </form>
+          </Form>
 
           <div className="mt-6 text-sm text-slate-600">
             Don't have an account?{" "}

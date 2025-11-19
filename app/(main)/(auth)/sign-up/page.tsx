@@ -1,7 +1,45 @@
 "use client";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { SubmitHandler, useForm } from "react-hook-form";
+import z from "zod";
+
+const signUpSchema = z.object({
+  name: z.string().min(1, "Please fill your name."),
+  email: z.email(),
+  password: z
+    .string()
+    .min(8, "Password must be atleast 8 characters.")
+    .max(63, "Password must be less than 64 characters."),
+  terms_agreed: z.boolean().refine((value) => value === true, {
+    error: "Please agree to the terms and conditions to proceed.",
+  }),
+});
+type SignUpSchema = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
+  const form = useForm({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      password: "",
+      terms_agreed: false,
+    },
+  });
+
+  const createUser: SubmitHandler<SignUpSchema> = (data) => {
+    console.log(data);
+  };
+
   return (
     <main className="h-full w-full max-w-(--breakpoint-xl) mx-auto grid grid-cols-1 lg:grid-cols-2">
       <div className="w-full h-full bg-white overflow-hidden border border-border ">
@@ -11,54 +49,95 @@ export default function SignUpPage() {
             Sign up to start managing your student budget with clarity.
           </p>
 
-          <form className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2">Name</label>
-              <input
-                type="text"
-                placeholder="Enter your name"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+          <Form {...form}>
+            <form className="space-y-6">
+              <FormField
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <input
+                        {...field}
+                        type="text"
+                        placeholder="Enter your name"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+              <FormField
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <input
+                        {...field}
+                        type="email"
+                        placeholder="Enter your email"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+              <FormField
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <input
+                        {...field}
+                        type="password"
+                        placeholder="Enter your password"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="flex items-start gap-2 text-sm">
-              <input type="checkbox" className="mt-1" />
-              <label className="text-slate-600">
-                I agree to the{" "}
-                <Link
-                  href="/terms-and-conditions"
-                  className="underline hover:text-slate-800"
-                >
-                  Terms & Conditions
-                </Link>
-              </label>
-            </div>
+              <FormField
+                name="terms_agreed"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-start gap-2 text-sm">
+                      <FormControl>
+                        <input {...field} type="checkbox" className="mt-1" />
+                      </FormControl>
+                      <label className="text-slate-600">
+                        I agree to the{" "}
+                        <Link
+                          href="/terms-and-conditions"
+                          className="underline hover:text-slate-800"
+                        >
+                          Terms & Conditions
+                        </Link>
+                      </label>
+                    </div>
 
-            <button
-              type="submit"
-              className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-black transition"
-            >
-              Sign up
-            </button>
-          </form>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <button
+                type="submit"
+                onClick={form.handleSubmit(createUser)}
+                className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-black transition"
+              >
+                Sign up
+              </button>
+            </form>
+          </Form>
         </div>
       </div>
 
