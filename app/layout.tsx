@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${manrope.className} antialiased max-w-screen max-h-screen overflow-hidden h-auto w-screen overflow-x-hidden`}
+        className={`${manrope.className} antialiased max-w-screen h-auto w-screen overflow-x-hidden`}
       >
         <ZoomProvider>
           <ThemeProvider
