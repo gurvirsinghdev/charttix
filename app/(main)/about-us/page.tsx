@@ -7,10 +7,11 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-6 space-y-6">
           <p className="leading-relaxed">
             Charttix began with a simple idea: managing your student finances
-            shouldn’t be a confusing or stressful experience. Students juggle
-            pocket money, part-time income, rent, food, tuition, and small
-            everyday expenses that add up quickly—yet most finance apps are
-            built for adults with salaries and mortgages, not student realities.
+            shouldn{"’"}t be a confusing or stressful experience. Students
+            juggle pocket money, part-time income, rent, food, tuition, and
+            small everyday expenses that add up quickly—yet most finance apps
+            are built for adults with salaries and mortgages, not student
+            realities.
           </p>
 
           <p className="leading-relaxed">
