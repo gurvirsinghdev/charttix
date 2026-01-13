@@ -7,7 +7,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useTRPC } from "@/server/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
@@ -39,6 +41,10 @@ export default function SignUpPage() {
   const createUser: SubmitHandler<SignUpSchema> = (data) => {
     console.log(data);
   };
+
+  const trpc = useTRPC();
+  const helloQuery = useQuery(trpc.hello.queryOptions());
+  console.log(helloQuery.data);
 
   return (
     <main className="h-full w-full max-w-(--breakpoint-xl) mx-auto grid grid-cols-1 lg:grid-cols-2">
@@ -132,7 +138,7 @@ export default function SignUpPage() {
               <button
                 type="submit"
                 onClick={form.handleSubmit(createUser)}
-                className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-black transition"
+                className="w-full cursor-pointer bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-slate-800 transition"
               >
                 Sign up
               </button>

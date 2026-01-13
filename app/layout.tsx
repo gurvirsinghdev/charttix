@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import ZoomProvider from "@/providers/ZoomProvider";
+import { ReactTRPCContext } from "@/server/client";
 
 const manrope = Manrope({
   weight: ["400"],
@@ -24,21 +25,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${manrope.className} antialiased max-w-screen h-auto w-screen overflow-x-hidden`}
-      >
-        <ZoomProvider>
-          <ThemeProvider
-            forcedTheme="light"
-            enableSystem={false}
-            attribute={"class"}
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </ZoomProvider>
-      </body>
-    </html>
+    <ReactTRPCContext>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${manrope.className} antialiased max-w-screen h-auto w-screen overflow-x-hidden`}
+        >
+          <ZoomProvider>
+            <ThemeProvider
+              forcedTheme="light"
+              enableSystem={false}
+              attribute={"class"}
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </ZoomProvider>
+        </body>
+      </html>
+    </ReactTRPCContext>
   );
 }
