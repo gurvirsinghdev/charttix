@@ -10,8 +10,8 @@ export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();
 
 function getBaseUrl() {
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return `https://${process.env.NEXT_PUBLIC_BASE_URL}`;
   }
   return "http://localhost:3000";
 }
