@@ -11,6 +11,7 @@ import { createUserSchema } from "@/schemas/user";
 import { useTRPC } from "@/server/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -156,7 +157,13 @@ export default function SignUpPage() {
                 onClick={form.handleSubmit(createUser)}
                 className="w-full cursor-pointer bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-slate-800 transition"
               >
-                Sign up
+                {createUserMutation.isPending ? (
+                  <div className="w-full h-full grid place-items-center">
+                    <Loader2Icon className="size-4 animate-spin" />
+                  </div>
+                ) : (
+                  <span>Sign up</span>
+                )}
               </button>
             </form>
           </Form>

@@ -1,5 +1,10 @@
 import z from "zod";
 
+export const loginUserSchema = z.object({
+  email: z.email("Please enter a valid email address!"),
+  password: z.string(),
+});
+
 export const createUserSchema = z.object({
   email: z.email("Please enter a valid email address!"),
   password: z

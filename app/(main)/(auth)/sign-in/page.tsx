@@ -11,24 +11,44 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { loginUserSchema } from "@/schemas/user";
+import { useTRPC } from "@/server/client";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Loader2Icon } from "lucide-react";
 
-const signInSchema = z.object({
-  email: z.email(),
-  password: z.string(),
-});
-type SignInSchema = z.infer<typeof signInSchema>;
+type SignInSchema = z.infer<typeof loginUserSchema>;
 
 export default function SignInPage() {
   const form = useForm<SignInSchema>({
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(loginUserSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
+  const trpc = useTRPC();
+  const toastOptions = {
+    id: "login-user",
+    richColors: true,
+  };
+  const loginUserMutation = useMutation(
+    trpc.user.login.mutationOptions({
+      onMutate() {
+        toast.info("Signing in...", toastOptions);
+      },
+      onSuccess() {
+        toast.success("Logged In!", toastOptions);
+      },
+      onError(err) {
+        toast.error(err.message, toastOptions);
+      },
+    })
+  );
+
   const userLogin: SubmitHandler<SignInSchema> = (data) => {
-    console.log(data);
+    loginUserMutation.mutate(data);
   };
 
   return (
@@ -95,9 +115,15 @@ export default function SignInPage() {
               <button
                 type="submit"
                 onClick={form.handleSubmit(userLogin)}
-                className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-black transition"
+                className="w-full cursor-pointer bg-slate-900 text-white py-3 rounded-lg text-sm font-medium hover:bg-slate-800 transition"
               >
-                Sign in
+                {loginUserMutation.isPending ? (
+                  <div className="w-full h-full grid place-items-center">
+                    <Loader2Icon className="size-4 animate-spin" />
+                  </div>
+                ) : (
+                  <span>Sign in</span>
+                )}
               </button>
             </form>
           </Form>
