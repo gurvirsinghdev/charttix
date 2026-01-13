@@ -7,24 +7,24 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { createUserSchema } from "@/schemas/user";
 import { useTRPC } from "@/server/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
-const signUpSchema = z.object({
-  name: z.string().min(1, "Please fill your name."),
-  email: z.email(),
-  password: z
-    .string()
-    .min(8, "Password must be atleast 8 characters.")
-    .max(63, "Password must be less than 64 characters."),
-  terms_agreed: z.boolean().refine((value) => value === true, {
-    error: "Please agree to the terms and conditions to proceed.",
-  }),
-});
+const signUpSchema = z.intersection(
+  createUserSchema,
+  z.object({
+    terms_agreed: z.boolean().refine((value) => value === true, {
+      error: "Please agree to the terms and conditions to proceed.",
+    }),
+  })
+);
+
 type SignUpSchema = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
@@ -32,19 +32,35 @@ export default function SignUpPage() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
-      name: "",
       password: "",
+      full_name: "",
       terms_agreed: false,
     },
   });
 
-  const createUser: SubmitHandler<SignUpSchema> = (data) => {
-    console.log(data);
+  const trpc = useTRPC();
+  const toastOptions = {
+    id: "create-user",
+    richColors: true,
   };
 
-  const trpc = useTRPC();
-  const helloQuery = useQuery(trpc.hello.queryOptions());
-  console.log(helloQuery.data);
+  const createUserMutation = useMutation(
+    trpc.user.create.mutationOptions({
+      onMutate() {
+        toast.info("Creating your account...", toastOptions);
+      },
+      onSuccess() {
+        toast.success("Account Created!", toastOptions);
+      },
+      onError(err) {
+        toast.error(err.message, toastOptions);
+      },
+    })
+  );
+
+  const createUser: SubmitHandler<SignUpSchema> = (data) => {
+    createUserMutation.mutate(data);
+  };
 
   return (
     <main className="h-full w-full max-w-(--breakpoint-xl) mx-auto grid grid-cols-1 lg:grid-cols-2">
@@ -58,15 +74,15 @@ export default function SignUpPage() {
           <Form {...form}>
             <form className="space-y-6">
               <FormField
-                name="name"
+                name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <input
                         {...field}
                         type="text"
-                        placeholder="Enter your name"
+                        placeholder="Enter your full name"
                         className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
                       />
                     </FormControl>

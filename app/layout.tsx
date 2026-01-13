@@ -5,6 +5,7 @@ import { Manrope } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import ZoomProvider from "@/providers/ZoomProvider";
 import { ReactTRPCContext } from "@/server/client";
+import { Toaster } from "sonner";
 
 const manrope = Manrope({
   weight: ["400"],
@@ -31,6 +32,7 @@ export default function RootLayout({
           className={`${manrope.className} antialiased max-w-screen h-auto w-screen overflow-x-hidden`}
         >
           <ZoomProvider>
+            <Toaster toastOptions={{ className: manrope.className }} />
             <ThemeProvider
               forcedTheme="light"
               enableSystem={false}
